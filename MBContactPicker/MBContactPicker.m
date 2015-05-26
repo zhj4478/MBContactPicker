@@ -83,6 +83,7 @@ CGFloat const kAnimationSpeed = .25;
     self.translatesAutoresizingMaskIntoConstraints = NO;
     self.clipsToBounds = YES;
     self.enabled = YES;
+    self.hideWhenNoResult = YES;
     
     MBContactCollectionView *contactCollectionView = [MBContactCollectionView contactCollectionViewWithFrame:self.bounds];
     contactCollectionView.contactDelegate = self;
@@ -314,7 +315,17 @@ CGFloat const kAnimationSpeed = .25;
             predicate = [NSPredicate predicateWithFormat:@"contactTitle contains[cd] %@ && !SELF IN %@", searchString, self.contactCollectionView.selectedContacts];
         }
         self.filteredContacts = [self.contacts filteredArrayUsingPredicate:predicate];
-        [self.searchTableView reloadData];
+        
+        if (self.hideWhenNoResult && self.filteredContacts.count  <= 0) {
+            if(!self.searchTableView.hidden)
+                [self hideSearchTableView];
+        }
+        else
+        {
+            if(self.searchTableView.hidden)
+                [self showSearchTableView];
+            [self.searchTableView reloadData];
+        }
     }
 }
 
